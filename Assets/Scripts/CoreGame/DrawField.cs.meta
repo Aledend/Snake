@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: aa68b2459d586f348ad2914b08c729d2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - tileMat: {fileID: 2100000, guid: 2a25fa274573a27489cc757effd0da36, type: 2}
+  - widthInput: {instanceID: 0}
+  - heightInput: {instanceID: 0}
+  - widthSlider: {instanceID: 0}
+  - heightSlider: {instanceID: 0}
+  - data: {fileID: 11400000, guid: 7d4f02f70d2c26a499b3b182830bed96, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de612fdedb312754bba1dc491a9311c0, type: 3}
+  m_Name: Data
+  m_EditorClassIdentifier: 
+  occupiedMat: {fileID: 2100000, guid: d3b6327fcb395d447b12dab250aee10a, type: 2}
+  fruitMat: {fileID: 2100000, guid: 0b41b3ae50f2d3e429a0e766325e378a, type: 2}
+  normalMat: {fileID: 2100000, guid: 2a25fa274573a27489cc757effd0da36, type: 2}
+  gameOverUI: {fileID: 2189547435828057738, guid: a050ee198fd8dc043a458ef14f105d8a,
+    type: 3}
