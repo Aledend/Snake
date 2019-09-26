@@ -157,6 +157,8 @@ public class LinkedList<TType> : IEnumerator, IEnumerable {
         while(currentNode.nextNode != null)
         {
             currentNode = currentNode.nextNode;
+            if(currentNode.nextNode == head)
+                throw new Exception("LinkedList stuck in chained loop");
         }
         return currentNode.value;
     }
@@ -176,6 +178,8 @@ public class LinkedList<TType> : IEnumerator, IEnumerable {
         while (currentNode.nextNode != null)
         {
             currentNode = currentNode.nextNode;
+            if (currentNode.nextNode == head)
+                throw new Exception("LinkedList stuck in chained loop");
         }
         currentNode.nextNode = node;
         Count++;
@@ -194,6 +198,8 @@ public class LinkedList<TType> : IEnumerator, IEnumerable {
             while (currentNode.nextNode.nextNode != null)
             {
                 currentNode = currentNode.nextNode;
+                if (currentNode.nextNode == head)
+                    throw new Exception("LinkedList stuck in chained loop");
             }
             currentNode.nextNode = null;
             Count--;

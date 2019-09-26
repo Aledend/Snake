@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Diagnostics;
 
 public class SnakeController : MonoBehaviour
 {
@@ -13,8 +14,9 @@ public class SnakeController : MonoBehaviour
     [SerializeField]
     private GameManager gameManager;
     [SerializeField]
-    private Text scoreText, gameOverScore;
+    private Text scoreText;
 
+    Stopwatch sw = new Stopwatch();
     private string moveDirection = "";
     float tick = 0;
 
@@ -23,20 +25,28 @@ public class SnakeController : MonoBehaviour
         moveDirection = "";
         tick = 0;
         enabled = true;
+        sw.Start();
     }
 
     void FixedUpdate()
     {
         if(tick > 1)
         {
-            Move();
+            if (!gameManager.aStarActive)
+                Move();
+            else if (gameManager.aStarReady/* && gameManager.aStarPathed*/)
+            {
+                Move();
+                gameManager.aStarReady = false;
+            }
             tick = 0;
         }
         tick += data.snakeSpeed / 10f;
     }
     void Update()
     {
-        UpdateMovement();
+        if(!gameManager.aStarActive)
+            UpdateMovement();
     }
 
     private void UpdateMovement()
@@ -113,6 +123,19 @@ public class SnakeController : MonoBehaviour
                 Grow(Vector2Int.down);
                 break;
         }
+        gameManager.aStarMoving = false;
+    }
+
+    public void SetMoveDirection(Vector2Int v)
+    {
+        if (v == Vector2Int.left)
+            moveDirection = "left";
+        else if (v == Vector2Int.right)
+            moveDirection = "right";
+        else if (v == Vector2Int.up)
+            moveDirection = "up";
+        else if (v == Vector2Int.down)
+            moveDirection = "down";
     }
 
     private void Grow(Vector2Int v)
@@ -120,8 +143,10 @@ public class SnakeController : MonoBehaviour
         Vector2Int _newPos = data.snakeList[0].position + v;
         if(data.tiles[_newPos].isFruit)
         {
+            gameManager.aStarMoving = false;
+            gameManager.aStarReady = false;
             data.fruitEaten++;
-            data.snakeSpeed *= 1.1f;
+            data.snakeSpeed *= data.snakeSpeedMultiplier;
             data.tiles[_newPos].isFruit = false;
             data.tiles[_newPos].Occupy();
             gameManager.SpawnFruit();
@@ -131,7 +156,6 @@ public class SnakeController : MonoBehaviour
         {
             gameOver.SetActive(true);
             enabled = false;
-            gameOverScore.text = scoreText.text;
         }
         else
         {

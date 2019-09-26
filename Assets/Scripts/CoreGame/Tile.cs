@@ -5,9 +5,10 @@ using Unity;
 
 public class Tile : Object
 {
+    public bool occupied = false, isFruit = false;
+    public Vector2Int position;
+
     public GameObject go;
-    public bool occupied = false;
-    public bool isFruit = false;
     Data data;
     MeshRenderer renderer;
 
@@ -16,6 +17,7 @@ public class Tile : Object
         go = GameObject.CreatePrimitive(PrimitiveType.Quad);
         go.transform.parent = parent;
         go.transform.position = position.ToVector3();
+        this.position = position;
         renderer = go.GetComponent<MeshRenderer>();
         renderer.material = mat;
         this.data = data;
@@ -54,6 +56,5 @@ public class Tile : Object
         occupied = false;
         isFruit = false;
         renderer.material = data.normalMat;
-        //renderer.material = data.mat
     }
 }

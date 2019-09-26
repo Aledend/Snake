@@ -153,7 +153,7 @@ public class DrawField : MonoBehaviour
 
     private void MoveCamera()
     {
-        transform.parent.Find("PlayerViewCamera").position = new Vector3(fieldWidth / 2f - fieldWidth/5f, fieldHeight / 2f,  fieldWidth >= fieldHeight ? -fieldWidth*1.3f : -fieldHeight - (0.3f*fieldWidth));
+        transform.parent.Find("PlayerViewCamera").position = new Vector3(3 * fieldWidth / 10f, fieldHeight / 2f,  fieldWidth >= fieldHeight ? -fieldWidth*1.3f : -fieldHeight - (0.3f*fieldWidth));
     }
 
     public void SendBoxData()
