@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Diagnostics;
@@ -8,16 +6,17 @@ using System.Diagnostics;
 public class SnakeController : MonoBehaviour
 {
     [SerializeField]
-    Data data;
+    private Data data = null;
     [SerializeField]
-    private GameObject gameOver, inGame;
+    private GameObject gameOver = null;
     [SerializeField]
-    private GameManager gameManager;
+    private GameManager gameManager = null;
     [SerializeField]
-    private Text scoreText;
+    private Text scoreText = null;
 
     Stopwatch sw = new Stopwatch();
     private string moveDirection = "";
+    private string lastDirection = "";
     float tick = 0;
 
     public void GameStart()
@@ -30,19 +29,21 @@ public class SnakeController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(tick > 1)
+        //Moves the snake at a set interval
+        if(tick > 10)
         {
             if (!gameManager.aStarActive)
                 Move();
-            else if (gameManager.aStarReady/* && gameManager.aStarPathed*/)
+            else if (gameManager.aStarReady)
             {
                 Move();
                 gameManager.aStarReady = false;
             }
             tick = 0;
         }
-        tick += data.snakeSpeed / 10f;
+        tick += data.snakeSpeed;
     }
+
     void Update()
     {
         if(!gameManager.aStarActive)
@@ -51,9 +52,10 @@ public class SnakeController : MonoBehaviour
 
     private void UpdateMovement()
     {
+        //Prevents player from making immediate 180 turns, calling FixedUpdate on input allows for more interactive and precise movement
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            if(moveDirection == "right")
+            if(lastDirection == "right")
             {
                 moveDirection = "right";
             }
@@ -66,7 +68,7 @@ public class SnakeController : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            if (moveDirection == "left")
+            if (lastDirection == "left")
             {
                 moveDirection = "left";
             }
@@ -79,7 +81,7 @@ public class SnakeController : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            if (moveDirection == "down")
+            if (lastDirection == "down")
             {
                 moveDirection = "down";
             }
@@ -92,8 +94,7 @@ public class SnakeController : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            moveDirection = moveDirection == "up" ? "up" : "down";
-            if (moveDirection == "up")
+            if (lastDirection == "up")
             {
                 moveDirection = "up";
             }
@@ -108,6 +109,7 @@ public class SnakeController : MonoBehaviour
 
     private void Move()
     {
+        lastDirection = moveDirection;
         switch (moveDirection)
         {
             case "left":
@@ -138,9 +140,11 @@ public class SnakeController : MonoBehaviour
             moveDirection = "down";
     }
 
+    //Grows the snake in the given direction and removes the end of the tail if no fruit is eaten.
     private void Grow(Vector2Int v)
     {
         Vector2Int _newPos = data.snakeList[0].position + v;
+        //Check if new tile contains fruit
         if(data.tiles[_newPos].isFruit)
         {
             gameManager.aStarMoving = false;
@@ -152,11 +156,13 @@ public class SnakeController : MonoBehaviour
             gameManager.SpawnFruit();
             scoreText.text = (Convert.ToInt32(scoreText.text) + 1).ToString();
         }
+        //Call Game Over if the new tile is occupied, disables this script
         else if(data.tiles[_newPos].occupied)
         {
             gameOver.SetActive(true);
             enabled = false;
         }
+        //Removes last part of the snake and occupies the new tile
         else
         {
             data.tiles[data.snakeList.Last.position].UnOccupy();
@@ -164,6 +170,5 @@ public class SnakeController : MonoBehaviour
             data.tiles[_newPos].Occupy();
         }
         data.snakeList.Push(new SnakePart(_newPos));
-
     }
 }

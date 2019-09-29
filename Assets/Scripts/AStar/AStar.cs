@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "AStar", menuName = "ScriptableObjects/AStar", order = 2)]
 public class AStar : ScriptableObject
 {
     [SerializeField]
-    private Data data;
+    private Data data = null;
     [System.NonSerialized]
     private Dictionary<Vector2Int, AStarTile> tileList = new Dictionary<Vector2Int, AStarTile>();
     [System.NonSerialized]
@@ -15,37 +14,39 @@ public class AStar : ScriptableObject
     private List<Vector2Int> path = new List<Vector2Int>();
     private Vector2Int sourcePos;
 
+    //Try to find the nearest path to the fruit, takes in position of the snakehead
     public List<Vector2Int> CalculatePath(Vector2Int position)
     {
+        //Clear previous calculation
         tileList.Clear();
         path.Clear();
         currentPos = position;
         sourcePos = position;
+        //Marks the snakehead as origin
         AddInitialTile(position);
+        //Finds position of fruit
         Vector2Int _target = FindFruit();
+        //Calculate costs of neighboring tiles
         CheckNeighbors(position, _target);
 
-        int _count = 0;
-
-
-
-
-        (currentPos != _target)
+        //Find the path
+        while (currentPos != _target)
         {
-            AStarTile _tile;
-            if (findNextTile(out _tile))
+            //Checks if there is any tile left to calculate, returns the lowest cost tile.
+            if (FindNextTile(out AStarTile _tile))
             {
                 CheckNeighbors(_tile.position, _target);
             }
+            //If path to fruit cannot be found, reset the list and try to find a path to the tail
             else
             {
                 tileList.Clear();
                 currentPos = position;
                 AddInitialTile(position);
                 CheckNeighbors(position, data.snakeList.Last.position);
-                while(currentPos != data.snakeList.Last.position)
+                while (currentPos != data.snakeList.Last.position)
                 {
-                    if(findNextTile(out _tile))
+                    if (FindNextTile(out _tile))
                     {
                         CheckNeighbors(_tile.position, data.snakeList.Last.position);
                     }
@@ -56,24 +57,19 @@ public class AStar : ScriptableObject
                 }
                 break;
             }
-            _count++;
-            if(_count > 1000)
-            {
-
-            }
         }
 
+        //Takes the last tile and tracks back to the snake
         AStarTile _currentTile = tileList[currentPos];
         while (_currentTile.previousTile != null)
         {
             path.Add(_currentTile.position);
             _currentTile = _currentTile.previousTile;
-            if (_currentTile.previousTile == tileList[currentPos])
-                throw new System.Exception("Stuck in loop");
         }
         path.Add(position);
         path.Reverse();
         
+        //Return the per-tile path that the snake is to take
         return path;
     }
 
@@ -88,7 +84,7 @@ public class AStar : ScriptableObject
         throw new System.NullReferenceException("Fruit not found");
     }
 
-
+    //Update costs of neihboring tiles
     private void CheckNeighbors(Vector2Int position, Vector2Int targetPosition)
     {
         UpdateTile(position, position + Vector2Int.up, targetPosition);
@@ -99,30 +95,26 @@ public class AStar : ScriptableObject
 
     private void UpdateTile(Vector2Int currentPosition, Vector2Int newPosition, Vector2Int targetPosition)
     {
-        AStarTile _tile;
-        if (!tileList.TryGetValue(newPosition, out _tile))
+        //Checks wether tile already has been calculated and added to the dictionary
+        if (!tileList.TryGetValue(newPosition, out AStarTile _tile))
         {
             _tile = new AStarTile(newPosition);
             tileList.Add(newPosition, _tile);
         }
         else
         {
+            //If the tile has been calculated, check wether this would be a cheaper alternative.
             if (tileList[currentPosition].DistanceFromSource() + 1 + _tile.HCost > _tile.FCost)
                 return;
         }
-        try
+
+        if (data.tiles[newPosition].occupied && !data.tiles[newPosition].isFruit)
         {
-            if (data.tiles[newPosition].occupied && !data.tiles[newPosition].isFruit)
-            {
-                _tile.explored = true;
-                return;
-            }
-        }
-        catch
-        {
-            Debug.Log("Couldn't read data.tiles with pos: " + newPosition);
+            _tile.explored = true;
+            return;
         }
         
+        //Makes sure that the tile isn't the source tile to prevent a chain loop when looping through previousTile
         if(_tile.position != sourcePos)
         {
             _tile.previousTile = tileList[currentPosition];
@@ -141,7 +133,7 @@ public class AStar : ScriptableObject
         currentPos = position;
     }
 
-    private bool findNextTile(out AStarTile _tile)
+    private bool FindNextTile(out AStarTile _tile)
     {
         _tile = new AStarTile(Vector2Int.zero);
         int _FCost = int.MaxValue;
@@ -154,6 +146,7 @@ public class AStar : ScriptableObject
             }
         }
 
+        //Return false if no unexplored tile could be found
         if (_tile.position == Vector2Int.zero)
             return false;
         _tile.explored = true;

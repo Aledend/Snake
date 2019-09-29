@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AStarTile
 {
@@ -18,6 +16,7 @@ public class AStarTile
         this.position = position;
     }
 
+    //Calculates the tiles G-cost
     public int DistanceFromSource()
     {
         int _count = 0;

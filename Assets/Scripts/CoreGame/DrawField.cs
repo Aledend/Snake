@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,20 +14,19 @@ public class DrawField : MonoBehaviour
     private uint maxWidth = 40;
     private uint maxHeight = 40;
     [SerializeField]
-    private Material tileMat;
+    private Material tileMat = null;
     [SerializeField]
-    private InputField widthInput, heightInput;
+    private InputField widthInput = null, heightInput = null;
     [SerializeField]
-    private Slider widthSlider, heightSlider;
+    private Slider widthSlider = null, heightSlider = null;
 
     [SerializeField]
-    Data data;
+    private Data data = null;
 
-
-
-    // Start is called before the first frame update
+ 
     private void Awake()
     {
+        //Destroy all tiles that make up the playfield
         int _count = gameObject.transform.childCount;
         for (int i = 0; i < _count; i++)
         {
@@ -39,6 +37,7 @@ public class DrawField : MonoBehaviour
             data.tiles.Clear();
         }
         
+        //Generate new tiles
         heightCheck = fieldHeight;
         widthCheck = fieldWidth;
         for (int i = 0; i < fieldWidth; i++)
@@ -51,8 +50,7 @@ public class DrawField : MonoBehaviour
             }
         }
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         if(!Application.isPlaying)
@@ -76,6 +74,8 @@ public class DrawField : MonoBehaviour
         
     }
 
+
+    //Called upon changins the size of the playfield.
     private void UpdateField()
     {
 
@@ -156,6 +156,7 @@ public class DrawField : MonoBehaviour
         transform.parent.Find("PlayerViewCamera").position = new Vector3(3 * fieldWidth / 10f, fieldHeight / 2f,  fieldWidth >= fieldHeight ? -fieldWidth*1.3f : -fieldHeight - (0.3f*fieldWidth));
     }
 
+    //Called upon changing the value of a box in the settings
     public void SendBoxData()
     {
         uint _widthValue;
@@ -184,6 +185,7 @@ public class DrawField : MonoBehaviour
         MoveCamera();
     }
 
+    //Called upon changing the value of a slider in settings
     public void SendSliderData()
     {
         fieldWidth = (uint)widthSlider.value;

@@ -1,23 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
-    GameObject settings;
+    private DrawField drawField = null;
     [SerializeField]
-    DrawField drawField;
+    private Data data = null;
     [SerializeField]
-    Data data;
+    private SnakeController snakeController = null;
     [SerializeField]
-    SnakeController snakeController;
-    [SerializeField]
-    private Text scoreText;
+    private Text scoreText = null;
 
     [SerializeField]
-    AStar aStar;
+    AStar aStar = null;
     public bool aStarActive = false;
     List<Vector2Int> path = new List<Vector2Int>();
 
@@ -26,6 +23,7 @@ public class GameManager : MonoBehaviour
 
     public void GameStart()
     {
+        //Clear the playfield
         foreach(Tile tile in data.tiles.Values)
         {
             tile.UnOccupy();
@@ -34,6 +32,7 @@ public class GameManager : MonoBehaviour
         data.snakeSpeed = 1;
         scoreText.text = "0";
 
+        //Draw the playfield and spawn the player/fruit
         drawField.GameStart();
         snakeController.GameStart();
         SpawnPlayer();
@@ -46,10 +45,15 @@ public class GameManager : MonoBehaviour
         {
             if (!aStarMoving)
             {
+                if (data.snakeList.Count < 1)
+                    return;
+                //Finds path from snake to fruit. Calculates a new path after every movement
                 path = new List<Vector2Int>(aStar.CalculatePath(data.snakeList[0].position));
                 aStarMoving = true;
+                //If no path could be made, move up
                 if (path.Count < 2)
                     snakeController.SetMoveDirection(Vector2Int.up);
+                //Else move according to the first set of vectors that makes up the path
                 else
                     snakeController.SetMoveDirection(path[1] - path[0]);
                 aStarReady = true;

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Unity;
+﻿using UnityEngine;
 
 public class Tile : Object
 {
@@ -9,8 +6,8 @@ public class Tile : Object
     public Vector2Int position;
 
     public GameObject go;
-    Data data;
-    MeshRenderer renderer;
+    private Data data;
+    private MeshRenderer renderer;
 
     public Tile(Vector2Int position, Transform parent, Material mat, Data data)
     {
@@ -23,34 +20,41 @@ public class Tile : Object
         this.data = data;
     }
 
+    //Used in game
     public void DestroyTile()
     {
         Destroy(go);
         Destroy(this);
     }
 
+    //Used in editor
     public void DestroyTileImmediate()
     {
         DestroyImmediate(go);
         DestroyImmediate(this);
     }
 
+    //Becomes wall or snake
     public void Occupy()
     {
         occupied = true;
         renderer.material = data.occupiedMat;
     }
 
+    //Becomes fruit
     public void AddFruit()
     {
         renderer.material = data.fruitMat;
         isFruit = true;
     }
+
+    //Becomes snake
     public void RemoveFruit()
     {
         renderer.material = data.occupiedMat;
     }
 
+    //Becomes empty 
     public void UnOccupy()
     {
         occupied = false;
