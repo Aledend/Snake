@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour
     }
     private void SpawnPlayer()
     {
-        Vector2Int _pos = new Vector2Int(Random.Range(1, (int)drawField.fieldWidth - 1), Random.Range(1, (int)drawField.fieldHeight - 1));
+        Vector2Int _pos = new Vector2Int(Random.Range(1, (int)data.fieldWidth - 1), Random.Range(1, (int)data.fieldHeight - 1));
         data.snakeList.Append(new SnakePart(_pos));
         data.tiles[_pos].Occupy();
     }

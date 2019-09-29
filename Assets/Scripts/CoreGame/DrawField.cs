@@ -5,8 +5,6 @@ using UnityEngine.UI;
 [ExecuteAlways]
 public class DrawField : MonoBehaviour
 {
-    public uint fieldHeight = 10;
-    public uint fieldWidth = 10;
     private uint heightCheck;
     private uint widthCheck;
     private uint minWidth = 10;
@@ -38,11 +36,11 @@ public class DrawField : MonoBehaviour
         }
         
         //Generate new tiles
-        heightCheck = fieldHeight;
-        widthCheck = fieldWidth;
-        for (int i = 0; i < fieldWidth; i++)
+        heightCheck = data.fieldHeight;
+        widthCheck = data.fieldWidth;
+        for (int i = 0; i < data.fieldWidth; i++)
         {
-            for (int j = 0; j < fieldHeight; j++)
+            for (int j = 0; j < data.fieldHeight; j++)
             {
                 Vector2Int pos = new Vector2Int(i, j);
                 Tile t = new Tile(pos, transform, tileMat, data);
@@ -55,17 +53,17 @@ public class DrawField : MonoBehaviour
     {
         if(!Application.isPlaying)
         {
-            if (heightCheck != fieldHeight || widthCheck != fieldWidth)
+            if (heightCheck != data.fieldHeight || widthCheck != data.fieldWidth)
             {
-                if (fieldHeight > 40)
-                    fieldHeight = 40;
-                else if (fieldHeight < 10)
-                    fieldHeight = 10;
-                if (fieldWidth > 40)
-                    fieldWidth = 40;
-                else if (fieldWidth < 10)
+                if (data.fieldHeight > 40)
+                    data.fieldHeight = 40;
+                else if (data.fieldHeight < 10)
+                    data.fieldHeight = 10;
+                if (data.fieldWidth > 40)
+                    data.fieldWidth = 40;
+                else if (data.fieldWidth < 10)
                 {
-                    fieldWidth = 10;
+                    data.fieldWidth = 10;
                 }
                 UpdateField();
                 MoveCamera();
@@ -80,11 +78,11 @@ public class DrawField : MonoBehaviour
     {
 
         //Remove rows
-        if(widthCheck > fieldWidth)
+        if(widthCheck > data.fieldWidth)
         {
-            for (int i = (int)fieldWidth; i < widthCheck; i++)
+            for (int i = (int)data.fieldWidth; i < widthCheck; i++)
             {
-                for (int j = 0; j < fieldHeight; j++)
+                for (int j = 0; j < data.fieldHeight; j++)
                 {
                     Vector2Int _pos = new Vector2Int(i, j);
                     if (Application.isPlaying)
@@ -100,11 +98,11 @@ public class DrawField : MonoBehaviour
                 }
             }
         }
-        else if(heightCheck > fieldHeight)
+        else if(heightCheck > data.fieldHeight)
         {
-            for (int i = (int)fieldHeight; i < heightCheck; i++)
+            for (int i = (int)data.fieldHeight; i < heightCheck; i++)
             {
-                for (int j = 0; j < fieldWidth; j++)
+                for (int j = 0; j < data.fieldWidth; j++)
                 {
                     Vector2Int _pos = new Vector2Int(j, i);
                     if (Application.isPlaying)
@@ -123,11 +121,11 @@ public class DrawField : MonoBehaviour
         
 
         //Add rows
-        else if(widthCheck < fieldWidth)
+        else if(widthCheck < data.fieldWidth)
         {
-            for (int i = (int)widthCheck; i < fieldWidth; i++)
+            for (int i = (int)widthCheck; i < data.fieldWidth; i++)
             {
-                for (int j = 0; j < fieldHeight; j++)
+                for (int j = 0; j < data.fieldHeight; j++)
                 {
                     Vector2Int _pos = new Vector2Int(i, j);
                     Tile t = new Tile(_pos, transform, tileMat, data);
@@ -135,11 +133,11 @@ public class DrawField : MonoBehaviour
                 }
             }
         }
-        else if(heightCheck < fieldHeight)
+        else if(heightCheck < data.fieldHeight)
         {
-            for (int i = (int)heightCheck; i < fieldHeight; i++)
+            for (int i = (int)heightCheck; i < data.fieldHeight; i++)
             {
-                for (int j = 0; j < fieldWidth; j++)
+                for (int j = 0; j < data.fieldWidth; j++)
                 {
                     Vector2Int _pos = new Vector2Int(j, i);
                     Tile t = new Tile(_pos, transform, tileMat, data);
@@ -147,13 +145,13 @@ public class DrawField : MonoBehaviour
                 }
             }
         }
-        heightCheck = fieldHeight;
-        widthCheck = fieldWidth;
+        heightCheck = data.fieldHeight;
+        widthCheck = data.fieldWidth;
     }
 
     private void MoveCamera()
     {
-        transform.parent.Find("PlayerViewCamera").position = new Vector3(3 * fieldWidth / 10f, fieldHeight / 2f,  fieldWidth >= fieldHeight ? -fieldWidth*1.3f : -fieldHeight - (0.3f*fieldWidth));
+        transform.parent.Find("PlayerViewCamera").position = new Vector3(3 * data.fieldWidth / 10f, data.fieldHeight / 2f,  data.fieldWidth >= data.fieldHeight ? -data.fieldWidth*1.3f : -data.fieldHeight - (0.3f*data.fieldWidth));
     }
 
     //Called upon changing the value of a box in the settings
@@ -174,12 +172,12 @@ public class DrawField : MonoBehaviour
         catch { _heightValue = minHeight; }
 
         //Keep width and height within bounds
-        fieldWidth = _widthValue < minWidth ? minWidth : _widthValue > maxWidth ? maxWidth : _widthValue;
-        fieldHeight = _heightValue < minHeight ? minHeight : _heightValue > maxHeight ? maxHeight : _heightValue;
+        data.fieldWidth = _widthValue < minWidth ? minWidth : _widthValue > maxWidth ? maxWidth : _widthValue;
+        data.fieldHeight = _heightValue < minHeight ? minHeight : _heightValue > maxHeight ? maxHeight : _heightValue;
 
         //Update sliders
-        widthSlider.value = fieldWidth;
-        heightSlider.value = fieldHeight;
+        widthSlider.value = data.fieldWidth;
+        heightSlider.value = data.fieldHeight;
 
         UpdateField();
         MoveCamera();
@@ -188,11 +186,11 @@ public class DrawField : MonoBehaviour
     //Called upon changing the value of a slider in settings
     public void SendSliderData()
     {
-        fieldWidth = (uint)widthSlider.value;
-        fieldHeight = (uint)heightSlider.value;
+        data.fieldWidth = (uint)widthSlider.value;
+        data.fieldHeight = (uint)heightSlider.value;
 
-        widthInput.text = fieldWidth.ToString();
-        heightInput.text = fieldHeight.ToString();
+        widthInput.text = data.fieldWidth.ToString();
+        heightInput.text = data.fieldHeight.ToString();
 
         UpdateField();
         MoveCamera();
@@ -206,17 +204,17 @@ public class DrawField : MonoBehaviour
     private void DrawWalls()
     {
         //Draw horizontal walls
-        for (int i = 0; i < fieldWidth; i++)
+        for (int i = 0; i < data.fieldWidth; i++)
         {
             data.tiles[new Vector2Int(i, 0)].Occupy();
-            data.tiles[new Vector2Int(i, (int)fieldHeight - 1)].Occupy();
+            data.tiles[new Vector2Int(i, (int)data.fieldHeight - 1)].Occupy();
         }
 
         //Draw vertical walls
-        for (int i = 1; i < fieldHeight - 1; i++)
+        for (int i = 1; i < data.fieldHeight - 1; i++)
         {
             data.tiles[new Vector2Int(0, i)].Occupy();
-            data.tiles[new Vector2Int((int)fieldWidth - 1, i)].Occupy();
+            data.tiles[new Vector2Int((int)data.fieldWidth - 1, i)].Occupy();
         }
     }
 }

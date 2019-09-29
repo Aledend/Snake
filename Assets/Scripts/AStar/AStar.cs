@@ -108,14 +108,19 @@ public class AStar : ScriptableObject
                 return;
         }
 
-        if (data.tiles[newPosition].occupied && !data.tiles[newPosition].isFruit)
+        if(newPosition.x == 0 || newPosition.x == data.fieldWidth || newPosition.y == 0 || newPosition.y == data.fieldHeight)
+        {
+            _tile.explored = true;
+            return;
+        }
+        else if (data.tiles[newPosition].occupied && !data.tiles[newPosition].isFruit)
         {
             _tile.explored = true;
             return;
         }
         
         //Makes sure that the tile isn't the source tile to prevent a chain loop when looping through previousTile
-        if(_tile.position != sourcePos)
+        else if(_tile.position != sourcePos)
         {
             _tile.previousTile = tileList[currentPosition];
             _tile.GCost = _tile.DistanceFromSource();

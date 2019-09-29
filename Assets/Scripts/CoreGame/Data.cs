@@ -17,6 +17,9 @@ public class Data : ScriptableObject
 
     [System.NonSerialized]
     public float snakeSpeed = 1.0f, snakeSpeedMultiplier = 1.1f;
-    
+
+    public uint fieldHeight = 10;
+    public uint fieldWidth = 10;
+
 
 }
